@@ -5,21 +5,27 @@ import { ScrollView } from "react-native";
 import { TouchableWithoutFeedback } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Dimensions } from "react-native";
+import { fallbackMoviePoster, image185 } from "../api/movieDb";
 
 let {width,height} = Dimensions.get('window');
 
-export default function MovieList({ title, data }) {
+export default function MovieList({ title, data,hideSeeAll }) {
   let movieName = "Ant-Man and the Wasp";
-  const navigation = useNavigation;
+  const navigation = useNavigation();
   return (
     <View className="mb-8 space-y-4">
       <View className="mx-4 flex-row justify-between items-center">
         <Text className="text-white text-xl">{title}</Text>
-        <TouchableOpacity>
-          <Text style={styles.text} className="text-lg">
-            See All
-          </Text>
-        </TouchableOpacity>
+        {
+          !hideSeeAll && (
+            <TouchableOpacity>
+            <Text style={styles.text} className="text-lg">
+              See All
+            </Text>
+          </TouchableOpacity>
+          )
+        }
+
       </View>
 
       {/* movie row */}
@@ -32,20 +38,21 @@ export default function MovieList({ title, data }) {
           return (
             <TouchableWithoutFeedback
               key={index}
-              onPress={() => navigation.navigate("Movie", item)}
+              onPress={() => navigation.push("Movie", item)}
             >
               <View>
               <View className="space-y-1 mr-4">
                 <Image
-                  source={require("../assets/images/moviePoster2.png")}
+                  // source={require("../assets/images/moviePoster2.png")}
+                  source={{uri: image185(item.poster_path)|| fallbackMoviePoster}}
                   className="rounded-3xl"
                   style={{ width: width * 0.33, height: height * 0.22 }}
                 />
               </View>
               <Text className="text-neutral-300 ml-1">
-                {movieName.length > 14
-                  ? movieName.slice(0, 14) + "..."
-                  : movieName}
+                {item.title.length > 14
+                  ? item.title.slice(0, 14) + "..."
+                  : item.title}
               </Text>
 
               </View>
